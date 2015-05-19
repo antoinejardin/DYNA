@@ -1,1 +1,139 @@
 
+*** Changement des noms de fichiers ***
+
+use "/home/me/DYN/121214_DiffEqRech_DynamobV1_versionBrute.dta"
+gen wave = 1
+save "/home/me/DYN/V1.dta"
+clear
+use "/home/me/DYN/EqDynamob_vague2_01042015.dta"
+gen wave = 2
+save "/home/me/DYN/V2.dta"
+clear
+use "/home/me/DYN/Municip_03_2014_version22042015.dta"
+gen wave=3
+save "/home/me/DYN/V3.dta"
+clear
+use "/home/me/DYN/PostMunicip_04_2014_version22042015.dta"
+gen wave = 4
+save "/home/me/DYN/V4.dta"
+clear
+use "/home/me/DYN/Europ_05_2014_version22042015.dta"
+gen wave = 5
+save "/home/me/DYN/V5.dta"
+clear
+use "/home/me/DYN/PostEurop_06_2014_version22042015.dta"
+gen wave = 6
+save "/home/me/DYN/V6.dta"
+clear
+use "/home/me/DYN/Dynamob_12_2014_v11052015.dta"
+gen wave = 7
+save "/home/me/DYN/V7.dta"
+clear
+
+*** Création d'un identifiant unique individus * vague ***
+
+use "/home/me/DYN/V1.dta"
+egen id = concat(UID_DYNA wave) , punct(_)
+save "/home/me/DYN/V1.dta", replace
+use "/home/me/DYN/V2.dta"
+egen id = concat(UID_DYNA wave) , punct(_)
+save "/home/me/DYN/V2.dta", replace
+use "/home/me/DYN/V3.dta"
+egen id = concat(UID_DYNA wave) , punct(_)
+save "/home/me/DYN/V3.dta", replace
+use "/home/me/DYN/V4.dta"
+egen id = concat(UID_DYNA wave) , punct(_)
+save "/home/me/DYN/V4.dta", replace
+use "/home/me/DYN/V5.dta"
+egen id = concat(UID_DYNA wave) , punct(_)
+save "/home/me/DYN/V5.dta", replace
+use "/home/me/DYN/V6.dta"
+egen id = concat(UID_DYNA wave) , punct(_)
+save "/home/me/DYN/V6.dta", replace
+use "/home/me/DYN/V7.dta"
+egen id = concat(UID_DYNA wave) , punct(_)
+save "/home/me/DYN/V7.dta", replace
+
+*** Fusion (append) des fichiers au format long ***
+
+use "/home/me/DYN/V1.dta"
+append using "/home/me/DYN/V2.dta", generate(f1)
+append using "/home/me/DYN/V3.dta", generate(f2)
+save "/home/me/DYN/V1V2.dta"
+clear
+
+use "/home/me/DYN/V3.dta"
+list zae
+tostring zae, replace
+save "/home/me/DYN/V3b.dta"
+clear
+
+use "/home/me/DYN/V1V2.dta"
+append using "/home/me/DYN/V3b.dta", generate(f2)
+
+use "/home/me/DYN/V3b.dta"
+tostring zae, replace
+tostring strate, replace
+save "/home/me/DYN/V3b.dta", replace
+clear
+
+use "/home/me/DYN/V4.dta"
+tostring zae, replace
+tostring strate, replace
+save "/home/me/DYN/V4b.dta"
+clear
+
+use "/home/me/DYN/V1V2V3.dta"
+append using "/home/me/DYN/V4b.dta", generate(f3)
+save "/home/me/DYN/V1V2V3V4.dta"
+clear
+
+use "/home/me/DYN/V5.dta"
+tostring zae, replace
+tostring strate, replace
+save "/home/me/DYN/V5b.dta"
+clear
+
+use "/home/me/DYN/V1V2V3V4.dta"
+append using "/home/me/DYN/V5b.dta", generate(f4)
+save "/home/me/DYN/V1V2V3V4V5.dta"
+clear
+
+use "/home/me/DYN/V6.dta"
+tostring zae, replace
+tostring strate, replace
+save "/home/me/DYN/V6b.dta"
+clear
+
+use "/home/me/DYN/V1V2V3V4V5.dta"
+append using "/home/me/DYN/V6b.dta", generate(f5)
+save "/home/me/DYN/V1V2V3V4V5V6.dta"
+clear
+
+use "/home/me/DYN/V7.dta"
+tostring zae, replace
+tostring strate, replace
+save "/home/me/DYN/V7b.dta"
+clear
+
+use "/home/me/DYN/V1V2V3V4V5V6.dta"
+append using "/home/me/DYN/V7b.dta", generate(f6)
+save "/home/me/DYN/V1V2V3V4V5V6V7.dta"
+
+*** Classement des variables de fusion ***
+
+order f1 f2 f3 f4 f5 f6, after(EA14_G6D)
+list f1 f2 f3 f4 f5 f6
+
+*** Fichier final ***
+
+save "/home/me/DYN/V1V2V3V4V5V6V7.dta", replace
+
+*** Replacement ***
+
+gen h4 = .
+replace h4 = H4 if H4 != .
+replace h4 = EA14_H4 if EA14_H4 != .
+replace h4 = EA13_H4 if EA13_H4 != .
+tab h4
+tab wave h4, row nof
