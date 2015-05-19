@@ -196,8 +196,6 @@ tab cs6
 recode cs6 (9/9999 = 9) 
 tab cs6
 
-
-
 lookfor dipl
 tab B18
 tab EA13_B18_REC
@@ -213,4 +211,29 @@ tab elip_sexe
 tab SEXE
 tab EA14_SEXE
 lookfor age
+
+tab wave ivleg2 [iw=zpw]
+tab wave ivleg2 [iw=zpw], row nof
+recode ivleg2 (1=1 ) (nonmiss = 0), gen (gauche)
+
+tab i8r
+recode i8r (0/4 = 1 "gauche") (nonmiss = 0) , gen (i8r2)
+tab i8r2
+
+save "/home/me/DYN/V1V2V3V4V5V6V7.dta", replace
+
+logistic i8r2 ib6.cs6##i.wave [iw=zpw]
+logistic gauche ib6.cs6##i.wave [iw=zpw]
+
+margins wave#cs6
+marginsplot, recastci(rarea)
+
+margins wave#cs6
+marginsplot, recastci(rarea) by(cs6)
+
+logistic gauche ib6.cs6##i.wave if cs6 <9 & cs6 > 1 [iw=zpw]
+margins wave#cs6
+
+marginsplot, recastci(rarea) recast(line) by(cs6)
+
 
