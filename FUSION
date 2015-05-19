@@ -137,3 +137,48 @@ replace h4 = EA14_H4 if EA14_H4 != .
 replace h4 = EA13_H4 if EA13_H4 != .
 tab h4
 tab wave h4, row nof
+
+
+lookfor EA13_I8
+tab EA13_I8
+tab DN01_I8
+tab ELIP_AXEGD
+tab ES02_B19
+
+gen i8 = .
+replace i8 = I8 if I8 != .
+replace i8 = EA13_I8 if EA13_I8 != .
+replace i8 = DN01_I8 if DN01_I8 != .
+replace i8 = ELIP_AXEGD if ELIP_AXEGD != .
+replace i8 =  ES02_B19 if  ES02_B19 != .
+tab i8
+recode i8 ( 0=0 "gauche") (10=10 "droite") (11/1000 = .) , gen( i8r )
+tab i8r
+
+
+lookfor leg
+tab ivotleg
+tab ELIP_IVOTLEG
+numlabel _all, add
+tab ivotleg
+tab ELIP_IVOTLEG
+gen ivleg = .
+replace ivleg = ivotleg if ivotleg != .
+replace ivleg =  ELIP_IVOTLEG if  ELIP_IVOTLEG != .
+tab ivleg
+recode ivleg ( 1 2 3 4 5 6 = 1 "gauche") (7 8 9 10 = 2 "droite") (11 12 =  3 "Autre") (13 14 15 = 4 "Non expr") (98 99 = .), gen(ivleg2)
+tab wave ivleg2, row nof
+
+lookfor poid
+gen zpw = .
+replace zpw = ZPOIDS if ZPOIDS != .
+replace zpw = zpoids if zpoids != .
+
+lookfor satispr
+tab satispr
+tab ELIP_SATISPR
+gen satpr = .
+replace satpr = satispr if satispr != .
+replace satpr = ELIP_SATISPR if ELIP_SATISPR != .
+recode satpr (1=1 "T satisfait") (4=4 "T mecontent") (8 9 = .) , gen(satpr_r)
+tab satpr_r
