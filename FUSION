@@ -272,3 +272,30 @@ tab relig
 recode relig ( 1 = 1 "aucune") (2 3 4 = 2 "chretiens") (5=3 "musulman") (6 7 8 = 4 "autre") (nonmiss = .), gen (religion)
 tab religion
 
+
+logistic gauche ib6.cs6##i.wave if cs6 <9 & cs6 > 1 [iw=zpw]
+logistic gauche ib6.cs6##i.wave if cs6 <9 & cs6 > 1 [iw=zpw]
+logistic gauche ib6.cs6##i.wave i.gndr##i.wave i.religion##i.wave c.age##i.wave  ib6.cs6##c.age if cs6 <9 & cs6 > 1 [iw=zpw]
+margins cs6#session#age
+margins cs6#wave#age
+logistic gauche ib6.cs6##i.wave i.gndr##i.wave i.religion##i.wave c.age##i.wave  ib6.cs6##c.age if cs6 <9 & cs6 > 1 [iw=zpw]
+margins age#wave
+melogit gauche i.cs6 i.religion i.gndr age if cs6 <9 & cs6 > 1 [iw=zpw] || wave:
+melogit gauche i.cs6 i.religion i.gndr age if cs6 <9 & cs6 > 1  || wave:
+margins wave
+logistic gauche i.cs6##i.wave i.religion##i.wave i.gndr##i.wave c.age##i.wave if cs6 <9 & cs6 > 1  
+margins age
+margins, at (age = (1940 (5) 2000))
+margins, at (age = (1940 (5) 2000) wave)
+margins, at (age = (1940 (5) 2000) wave = ( 1 2 4 6 7))
+marginsplot
+margins, at (wave = ( 1 2 4 6 7) age = (1940 (5) 2000) )
+marginsplot
+margins, at (age = (1940 (10) 2000) wave = ( 1 2 4 6 7))
+margins, at (wave = ( 1 2 4 6 7) age = (1940 (10) 2000) )
+marginsplot
+margins, at (wave = ( 1 2 4 6 7) age = (1940 (10) 2000) )
+marginsplot, recastci(rarea)
+margins, at (wave = ( 1 2 4 6 7) age = (1940 (10) 2000) )
+marginsplot, recastci(rarea) by(age)
+
