@@ -236,4 +236,39 @@ margins wave#cs6
 
 marginsplot, recastci(rarea) recast(line) by(cs6)
 
+lookfor sex
+gen gndr = .
+tab elip_sexe
+replace gndr = 1 if elip_sexe=="M"
+replace gndr = 2 if elip_sexe=="F"
+tab SEXE
+replace gndr = 1 if SEXE == 1
+replace gndr = 2 if SEXE == 2
+tab EA13_SEXE
+replace gndr = 1 if EA13_SEXE== 1
+replace gndr = 2 if EA13_SEXE== 2
+tab EA14_SEXE
+replace gndr = 1 if EA14_SEXE== 1
+replace gndr = 2 if EA14_SEXE== 2
+tab gndr
+
+
+lookfor naissance
+recode A2A (10000/max =.), gen(age)
+xfill (age) , i(UID_DYNA)
+sc wave wave
+tab age
+
+
+lookfor reli
+tab H1
+tab EA13_H1
+tab EA14_H1
+gen relig = .
+replace relig = H1 if H1 != .
+replace relig = EA13_H1 if EA13_H1 != .
+replace relig = EA14_H1 if EA14_H1 != .
+tab relig
+recode relig ( 1 = 1 "aucune") (2 3 4 = 2 "chretiens") (5=3 "musulman") (6 7 8 = 4 "autre") (nonmiss = .), gen (religion)
+tab religion
 
