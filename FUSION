@@ -299,3 +299,65 @@ marginsplot, recastci(rarea)
 margins, at (wave = ( 1 2 4 6 7) age = (1940 (10) 2000) )
 marginsplot, recastci(rarea) by(age)
 
+*******
+
+
+use "/home/me/DYN/V1V2V3V4V5V6V7.dta"
+lookfor imm
+logistic gauche i.cs6 i.gndr i.diplo
+tab diplo
+tab b18
+lookfor diplo
+lookfor dipl
+tab B18
+tab b18
+recode b18 ( 1=1 "aucun") (4=4 "CEP") ( 5=5 "BEPC") (6 7=6 "CAP / BEP") (8 9 = 8 "BAC") (10 = 10 "Univ 1") (11=11 "Univ 2") (77/999=.), gen (diplo)
+tab diplo
+logistic gauche i.gndr i.age i.religion i.diplo i.wave
+gen age2 = 2013 - age
+tab age2
+recode age2 ( 18/24 = 1 " 18/24") (25/34= 2 "25/34") (35/44 =3 "35/44") (45/54 = 4 "45/54") (55/64 = 5 "55/64") (65/99= 6 "65 et plus"), gen (agecod)
+tab agecod
+save "/home/me/DYN/V1V2V3V4V5V6V7.dta", replace
+logistic gauche i.gndr i.agecod i.religion i.diplo i.wave
+logistic gauche i.gndr##i.wave i.agecod##i.wave i.religion##i.wave i.diplo##i.wave i.cs6##i.wave
+logistic gauche i.gndr##i.wave i.agecod##i.wave i.religion##i.wave i.diplo##i.wave i.cs6##i.wave [iw=zpw]
+margins cs6#wave
+marginsplot
+margins wave#cs6
+marginsplot
+margins wave#agecod
+marginsplot
+logistic gauche i.agecod##i.wave [iw=zpw]
+margins wave#agecod
+margins wave#agecod
+marginsplot
+margins wave#agecod
+marginsplot, recastci(rarea) recast(line) by(agecod)
+logistic gauche i.religion##i.wave [iw=zpw]
+margins wave#religion
+marginsplot, recastci(rarea) recast(line) by(religion)
+tab i8r
+tab ivleg2
+tab wave ivleg2
+tab ivleg
+tab ivleg2
+tab wave ivleg2
+tab wave ivleg2 [iw=zpw], row nof
+gen fn = .
+replace fn = 1 if ivleg2 == 3
+replace fn = 0 if fn ==.
+logistic fn i.gndr##i.wave i.agecod##i.wave i.religion##i.wave i.diplo##i.wave i.cs6##i.wave [iw=zpw]
+logistic fn i.agecod##i.wave [iw=zpw]
+margins wave#agecod
+marginsplot, recastci(rarea) recast(line) by(agecod)
+logistic fn i.cs6##i.wave [iw=zpw]
+margins wave#cs6
+marginsplot, recastci(rarea) recast(line) by(cs6)
+logistic fn i.cs6##i.wave [iw=zpw] if cs6 > 1
+margins wave#cs6
+marginsplot, recastci(rarea) recast(line) by(cs6)
+logistic fn i.cs6##i.diplo [iw=zpw] if cs6 > 1
+margins wave#diplo
+
+
