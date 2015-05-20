@@ -361,3 +361,96 @@ logistic fn i.cs6##i.diplo [iw=zpw] if cs6 > 1
 margins wave#diplo
 
 
+****
+
+use "/home/me/DYN/V1V2V3V4V5V6V7.dta"
+lookfor pays
+lookfor naissan
+lookfor A3
+tab A3
+tab A3REC
+ttab A3AREC
+tab A3AREC
+lookfor B22
+lookfor b22
+lookfor (pÃ¨re)
+tab EA14_B22_REC 
+lookfor gouv
+lookfor satis
+tab satispr
+tab ELIP_SATISGVT  
+PE01_SATISGVT 
+tab PE01_SATISGVT 
+tab i8r2
+tab i8r
+logistic gauche i.i8r##i.wave
+margins session#i8r
+margins wave#i8r
+marginsplot
+marginsplot, recastci(rarea)
+marginsplot, recastci(rarea) by(i8r)
+tab i8r2
+logistic i8r2 i.cs6##i.wave if cs6 > 1
+margins wave#cs6
+marginsplot, recastci(rarea) recast(line) by(cs6)
+tab ir82
+tab i8r2
+logistic i8r2 i.cs6##i.wave if cs6 > 1
+margins wave#cs6
+marginsplot, recastci(rarea) recast(line) by(cs6)
+logistic i8r2 i.cs6##i.wave if cs6 > 1 & cs6 <9 [iw=zpw]
+margins wave#cs6
+marginsplot, recastci(rarea) recast(line) by(cs6)
+tab wave i8r2 [iw=zpw], row nof
+tab wave satpr_r [iw=zpw], row nof
+tab wave satpr [iw=zpw], row nof
+tab satpr_r
+recode satpr_r ( 1 2 = 1 "satisfaits") (3 4 = 0 "mecontents") , gen (satisfh)
+logistic satisfh i.cs6##i.wave if cs6 > 1 & cs6 <9 [iw=zpw]
+margins wave#cs6
+marginsplot, recastci(rarea) recast(line) by(cs6)
+logistic satisfh i.diplo##i.wave [iw=zpw]
+margins wave#diplo
+marginsplot, recastci(rarea) recast(line) by(diplo)
+logistic satisfh i.agecod##i.wave [iw=zpw]
+margins wave#agecod
+marginsplot, recastci(rarea) recast(line) by(agecod)
+logistic gauche i.cs6##i.wave if cs6 > 1 & cs6 <9 [iw=zpw]
+margins wave#cs6
+marginsplot, recastci(rarea) recast(line) by(cs6)
+logistic gauche i.diplo##i.wave [iw=zpw]
+margins wave#diplo
+marginsplot, recastci(rarea) recast(line) by(diplo)
+logistic gauche i.agecod##i.wave [iw=zpw]
+margins wave#agecod
+marginsplot, recastci(rarea) recast(line) by(agecod)
+logistic gauche i.i8r##i.wave  [iw=zpw]
+margins wave#i8r
+marginsplot, recastci(rarea) recast(line) by(agecod)
+marginsplot, recastci(rarea) recast(line) by(i8r)
+logistic satisfh i.i8r##i.wave  [iw=zpw]
+margins wave#i8r
+marginsplot, recastci(rarea) recast(line) by(i8r)
+tab satisfh gauche [iw=zpw], row nof 
+bysort wave : tab satisfh gauche [iw=zpw], row nof 
+bysort wave : tab satisfh gauche [iw=zpw], cell nof
+tab satpr_r
+tab satisfh
+numlabel satisfh, add
+tab satisfh
+tab gauche
+gen attfh = .
+replace attfh = 0 if satisfh == 0 & gauche == 0
+replace attfh = 1 if satisfh == 0 & gauche == 1
+replace attfh = 1 if satisfh == 0 & gauche == 1
+replace attfh = 2 if satisfh == 1 & gauche == 0
+replace attfh = 3 if satisfh == 1 & gauche == 3
+replace attfh = 3 if satisfh == 1 & gauche == 1
+tab attfh
+mlogit attfh i.cs6##i.wave [iw=zpw]
+margins wave#cs6
+marginsplot, recastci(rarea) recast(line) by(cs6)
+tab wave attfh [iw=zpw], cell nof
+tab wave attfh [iw=zpw], row nof
+recode attfh (1=2 ) (2=1)
+tab wave attfh [iw=zpw], row nof
